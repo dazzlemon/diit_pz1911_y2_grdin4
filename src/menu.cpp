@@ -11,9 +11,9 @@ size_t Menu::read_choice() {
         do {
             for(size_t i = 0; i < options.size(); i++)
                 std::cout << i + 1 << ". " << options[i].menu_str << "\n";
-            std::cout << options.size() << ". Exit.\n";
+            std::cout << options.size() + 1 << ". Exit.\n";
 
-            if (!good)
+            if(!good)
                 std::cout << "Invalid choice! Try again.\n";
             std::string choice;
             std::cin >> choice;
