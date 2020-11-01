@@ -7,6 +7,7 @@
 #include <iostream>
 #include <regex>
 #include <fstream>
+#include <cstdio>
 
 namespace Menu {
     class Option {
@@ -17,49 +18,34 @@ namespace Menu {
 
     class Student {
     public:
-        Student(std::string name, size_t year, bool is_granted) : name{name}, year{year}, is_granted{is_granted} {}
-        std::string name;
+        Student(const char* name, size_t year, bool is_granted) : year{year}, is_granted{is_granted} {memcpy(&(this->name), name, 256);}
+        char name[256];
         size_t year;
         bool is_granted;
         friend std::ostream& operator<<(std::ostream& os, const Student& s);
     };
 
     std::ostream& operator<<(std::ostream& os, const Student& s);
+    std::fstream open_file(std::ios_base::openmode mode = std::ios_base::in);
+    std::vector<Student> students_str_to_vec(std::string str);
+    std::string students_vec_to_bin(std::vector<Student>& students);
+    std::vector<Student> students_txt_to_vec(std::fstream& file);
+    std::vector<Student> students_bin_to_vec(std::fstream& file);
 
     const std::vector<Option> options {
         {"Read txt.", [](){
-
-            char filename[256];
-            std::ifstream file;
-            do {
-                std::fill_n(filename, 256, 0);//0 = '\0'
-                std::cout << "input file adress: " << std::endl;
-                std::cin.get();
-                std::cin.getline(filename, 255);
-                file.open(filename);
-                if (!file)
-                    std::cout << "Can't open that file!" << std::endl;
-            } while (!file);
-
-            std::string str((std::istreambuf_iterator<char>(file)), (std::istreambuf_iterator<char>()));//"strineo sratnie rstaonie,1900,0          otsairne rtsnieoa artisone,2020,1      ahrntisenhtesairhnrtse rsaethni nrseathi,1800,7";
-            std::smatch match;
-            std::regex expr("([A-Za-z]{3,}\\s[A-Za-z]{3,}\\s[A-Za-z]{3,})\\,(19\\d{2}|20[01]\\d|2020)\\,([01])");
-            std::vector<Student> students;
-            while (std::regex_search(str, match, expr)) {
-                students.push_back(Student(match[1], std::stoi(match[2]), (bool)(static_cast<std::string>(match[3])[0] - 48)));
-                str = match.suffix().str();
-            }
-
+            std::fstream file = open_file();
+            std::vector<Student> students = students_txt_to_vec(file);
+            std::cout << "\n";
             for(auto& s : students)
-                if(s.is_granted) std::cout << s;
-
-            //save to binary
+                if(s.is_granted) std::cout << s << "\n";
+            std::cout << "Students were saved to " << students_vec_to_bin(students) << "\n";
             }},
         {"Read binary.", [](){
-            //read filename
-            //open file
-            //print result
-            std::cout << "2\n";
+            std::fstream file = open_file(std::ios_base::binary | std::ios_base::in);
+            std::vector<Student> students = students_bin_to_vec(file);
+            for(auto& s : students)
+                if(s.is_granted) std::cout << s << "\n";
             }},
     };
 
