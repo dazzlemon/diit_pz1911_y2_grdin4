@@ -26,6 +26,10 @@ void Menu::menu() {
     size_t choice;
         while((choice = read_choice()) < options.size()) {
             options[choice].action();
+
+            std::cout << "Press any key to continue...\n";
+            std::cin.get();
+            system("clear");
     }
 }
 
