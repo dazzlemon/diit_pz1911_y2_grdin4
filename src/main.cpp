@@ -1,5 +1,5 @@
 #include "menu.h"
 
 int main() {
-    Menu::menu();
+    Lr4::menu();
 }
