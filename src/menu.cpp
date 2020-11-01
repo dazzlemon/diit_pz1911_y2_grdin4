@@ -28,3 +28,10 @@ void Menu::menu() {
             options[choice].action();
     }
 }
+
+std::ostream& Menu::operator<<(std::ostream& os, const Student& s) {
+    os << "Name: " << s.name << "\n";
+    os << "Year: " << s.year << "\n";
+    os << "Grant: " << std::boolalpha << s.is_granted << "\n";
+    return os;
+}
